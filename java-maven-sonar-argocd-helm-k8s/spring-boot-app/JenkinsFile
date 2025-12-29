@@ -23,12 +23,21 @@ pipeline {
   environment {
     SONAR_URL = "http://3.16.67.178:9000"
   }
-  steps {
+   steps {
     withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-      sh 'export JAVA_HOME=/path/to/jdk17'
-      sh  'export PATH=$JAVA_HOME/bin:$PATH'
-      sh  'mvn clean install'
-      sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.host.url=${SONAR_URL} .'
+      dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
+        sh '''
+          # Use Java 17 (ensure this path exists on Jenkins agent / Docker image)
+          export JAVA_HOME=/path/to/jdk17
+          export PATH=$JAVA_HOME/bin:$PATH
+
+          # Build project
+          mvn clean install
+
+          # Run SonarQube analysis
+          mvn sonar:sonar -Dsonar.login=${SONAR_AUTH_TOKEN} -Dsonar.host.url=${SONAR_URL}
+        '''
+      }
     }
   }
 }
