@@ -28,8 +28,8 @@ pipeline {
       dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
         sh '''
           # Use Java 17 (ensure this path exists on Jenkins agent / Docker image)
-          export JAVA_HOME=/path/to/jdk17
-          export PATH=$JAVA_HOME/bin:$PATH
+          # export JAVA_HOME=/path/to/jdk17
+          # export PATH=$JAVA_HOME/bin:$PATH
 
           # Build project
           mvn clean install
